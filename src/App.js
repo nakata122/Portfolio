@@ -5,7 +5,6 @@ import './styles/App.css';
 class App extends Component {
 
   componentDidMount() {
-    // === THREE.JS CODE START ===
     var scene = new THREE.Scene();
     var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
     var renderer = new THREE.WebGLRenderer();
@@ -23,7 +22,6 @@ class App extends Component {
       renderer.render( scene, camera );
     };
     animate();
-    // === THREE.JS EXAMPLE CODE END ===
   }
 
   render()
