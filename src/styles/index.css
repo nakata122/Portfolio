@@ -5,6 +5,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x:hidden;
 }
 
 code {
@@ -12,4 +13,28 @@ code {
     monospace;
 }
 
-canvas { width: 100vw; height: 100vh; display: block; }
+canvas {  
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+main {
+  width: 100vw;
+  height: 200vh;
+  position: absolute;
+}
+
+h1 {
+  position: relative;
+  display: flex;
+  z-index: 100;
+  color:white;
+  justify-content: center;
+  align-items: center;
+  font-size: 4em;
+  width: 100vw;
+  height: 50vh;
+  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+  margin-bottom: 100vh;
+}
