@@ -5,8 +5,7 @@ import NotFound from './NotFound.js'
 const Main = () => (
     <main>
         <Switch>
-            <Route exact path='/' component={Home} />
-            <Route exact path='*' component={NotFound} />
+            <Route exact path='*' component={Home} />
         </Switch>
     </main>
 );

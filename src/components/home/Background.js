@@ -35,7 +35,7 @@ const Prisms = ({ i, j, maxSize, layer, col, wireframe }) => {
     let counter = 0;
     const t = clock.oldTime * 0.001;
     //Automatic scroll
-    // window.scrollTo(0, clock.elapsedTime * 30); 
+    // window.scrollTo(0, clock.elapsedTime * 100); 
 
     raycaster.setFromCamera(new THREE.Vector2(0,0), camera);
 
