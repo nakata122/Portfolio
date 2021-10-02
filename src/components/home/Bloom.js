@@ -14,16 +14,31 @@ const Bloom = ({ children }) => {
   const [scene, setScene] = useState()
   const composer = useRef()
   useEffect(() => void scene && composer.current.setSize(size.width, size.height), [size])
-  useFrame(() => scene && composer.current.render(), 1)
+  useFrame(() => {
+    
+    gl.autoClear = false;
+    scene && composer.current.render()
+  }, 1)
   return (
     <>
       <scene ref={setScene}>{children}</scene>
       <effectComposer ref={composer} args={[gl]}>
         <renderPass attachArray="passes" scene={scene} camera={camera} />
-        <unrealBloomPass attachArray="passes" args={[undefined, 1.5, 1, 0]} />
+        <unrealBloomPass attachArray="passes" args={[undefined, 1.0, 1, 0]} />
       </effectComposer>
     </>
   )
 }
 
-export default Bloom;
+function Main({ children }) {
+  const scene = useRef()
+  const { gl, camera } = useThree()
+  useFrame(() => {
+    // gl.autoClear = false
+    gl.clearDepth()
+    gl.render(scene.current, camera)
+  }, 2)
+  return <scene ref={scene}>{children}</scene>
+}
+
+export {Bloom, Main};

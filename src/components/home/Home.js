@@ -2,7 +2,7 @@ import React from "react";
 import * as THREE from "three";
 import { Canvas, useFrame, useThree, useLoader } from "@react-three/fiber";
 import { Stats, OrbitControls, Billboard, Text, useTexture } from '@react-three/drei';
-import Bloom from "./Bloom.js";
+import { Bloom } from "./Bloom.js";
 import Prisms from "./Background.js";
 import { Suspense, useMemo } from "react";
 
