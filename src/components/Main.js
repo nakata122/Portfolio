@@ -6,9 +6,8 @@ import NotFound from './NotFound.js'
 const Main = () => (
     <main>
         <Switch>
-            <Route exact path='*' component={Face} />
-            {/* <Route exact path='/home' component={Home} />
-            <Route exact path='/face' component={Face} /> */}
+            <Route exact path='/' component={Face} />
+            <Route exact path='/home' component={Home} />
 
         </Switch>
     </main>

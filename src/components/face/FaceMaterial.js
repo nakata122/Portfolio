@@ -8,14 +8,16 @@ export class FaceMaterial extends THREE.ShaderMaterial {
       transparent: true,
       uniforms: {
         effectFactor: { value: 0.2 },
-        lightPos:{ value: new THREE.Vector3(0,0,1)}
+        lightPos:{ value: new THREE.Vector3(0,0,1)},
+        animation: { value: 0.0 }
       },
       vertexShader: `
       uniform float effectFactor;
+      uniform float animation;
+      uniform vec3 lightPos;
       attribute vec3 center;
       attribute float rand;
       varying vec3 vNormal;
-      uniform vec3 lightPos;
 
       mat4 rotateZ(float angle) {
         float s = sin(angle);
@@ -52,23 +54,26 @@ export class FaceMaterial extends THREE.ShaderMaterial {
       }
 
       void main() {
-        vNormal = normal;
-        vec3 newCenter = mix(position, center + normal * 0.1 * distance(position, lightPos), 0.6);
+        vNormal = (vec4( normal, 1.0 ) * Translate(-center) * rotateZ(effectFactor + rand*10.0) * rotateY(effectFactor + rand*10.0) * Translate(center)).xyz;
+        // vNormal = normal;
+        vec3 newCenter = mix(position, center , 0.3);
         vec4 newPos = vec4( newCenter, 1.0 ) * Translate(-center) * rotateZ(effectFactor + rand*10.0) * rotateY(effectFactor + rand*10.0) * Translate(center);
+        newPos = vec4(mix(position + vec3(0.0,0.0, rand+0.3) * 200.0, newPos.xyz, min(max(effectFactor - 2.0, 0.0) * (rand / 10.0 + 0.2), 1.0)), 1.0);
 
         gl_Position = projectionMatrix * modelViewMatrix * vec4(newPos.xyz, 1.0);
       }`,
       fragmentShader: `
       uniform vec3 lightPos;
       varying vec3 vNormal;
+      uniform float animation;
 
       void main() {
         
         vec3 light = lightPos;
 
-        float dProd = max(0.0, dot(vNormal, light));
+        float dProd = max(0.0, dot(normalize(vNormal), light));
 
-        gl_FragColor = vec4(dProd, dProd, dProd*2.0, 0.5); 
+        gl_FragColor = vec4(0.1 * dProd, 0.6 * dProd, dProd, (0.2 + dProd) * animation); 
       }`
     })
   }
@@ -84,6 +89,12 @@ export class FaceMaterial extends THREE.ShaderMaterial {
   }
   set lightPos(v) {
     return (this.uniforms.lightPos.value = v);
+  }
+  get animation() {
+    return this.uniforms.animation.value;
+  }
+  set animation(v) {
+    return (this.uniforms.animation.value = v);
   }
 }
 
