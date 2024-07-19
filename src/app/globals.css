@@ -16,8 +16,8 @@
   }
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
+body{
+  margin: 0;
 }
 
 @layer utilities {
