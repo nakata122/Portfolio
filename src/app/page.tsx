@@ -1,14 +1,14 @@
 'use client'
 import * as THREE from "three"
 import { Canvas, useLoader } from "@react-three/fiber";
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import { MeshDistortMaterial } from "@react-three/drei";
-import { TextureLoader } from "three";
-import { Environment } from '@react-three/drei'
+import { RGBELoader } from "three/examples/jsm/Addons.js";
+import { Environment, OrbitControls } from '@react-three/drei'
 import { EffectComposer, Bloom, ToneMapping } from '@react-three/postprocessing'
+import { Particles } from './particleSystems'
 
 export default function Home() {
-  const colorMap = useLoader(TextureLoader, 'perlin_noise.png');
   // colorMap.repeat.set(5, 5);
   // colorMap.wrapS = colorMap.wrapT = THREE.RepeatWrapping;
 
@@ -18,20 +18,22 @@ export default function Home() {
         <Canvas>
           <Suspense fallback={null} />
           <color attach="background" args={["black"]} />
-          <Environment files="./perlin_noise_red.hdr" />
+          <Environment files="./sky2.hdr" background backgroundIntensity={0.1} backgroundBlurriness={0.1}/>
+          <Environment files="./perlin_noise_dark.hdr" />
+          <OrbitControls />
           <ambientLight intensity={1} />
           {/* <directionalLight color={new THREE.Color("red")} position={[0, 5, 5]} /> */}
           <EffectComposer enableNormalPass={false}>
             <Bloom 
               mipmapBlur
-              intensity={1000}
-              levels={7}
+              intensity={100}
+              levels={3}
               luminanceThreshold={0}
               />
             <ToneMapping />
           </EffectComposer>
           <mesh>
-            <icosahedronGeometry args={[2.9, 20]}/>
+            <icosahedronGeometry args={[3.0, 20]}/>
             <MeshDistortMaterial 
               color={new THREE.Color("black")}
               distort={0.15} 
@@ -39,9 +41,8 @@ export default function Home() {
               transparent 
               side={THREE.DoubleSide} 
               opacity={0.5}
-              roughness={0.1}
+              roughness={0.0}
               metalness={1.0}
-              toneMapped={false}
             />
           </mesh>
           <mesh>
@@ -55,9 +56,9 @@ export default function Home() {
               opacity={0.5}
               roughness={0.0}
               metalness={1.0}
-              toneMapped={false}
             />
           </mesh>
+          <Particles count={100} radius={10} />
         </Canvas>
       </div>
       <div className="m-auto z-10 text-white text-3xl">
