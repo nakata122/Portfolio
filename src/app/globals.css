@@ -25,3 +25,14 @@ body{
     text-wrap: balance;
   }
 }
+
+@layer base {
+  #check2 {
+    stroke-dasharray: 1171;
+    stroke-dashoffset: 1171;
+  }
+  #check {
+    stroke-dasharray: 826;
+    stroke-dashoffset: 826;
+  }
+}
