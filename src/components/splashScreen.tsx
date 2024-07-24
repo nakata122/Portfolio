@@ -23,12 +23,12 @@ function useWindowDimensions() {
     return windowDimensions;
 }
 
-function Splash({ isLoading }) {
+function Splash({ isLoading } : { isLoading:boolean }) {
     const [hidden, setHidden] = useState(false);
     if(!isLoading) setTimeout(() => {setHidden(true)}, 1000);
 
     return (
-    <div className={ (hidden ? "invisible ":"visible ") + (isLoading ? "opacity-100" : "opacity-0") + " transition-opacity ease-in-out duration-1000 h-screen w-screen bg-black absolute top-0 left-0 z-10 flex"}>
+    <div className={ (hidden ? "invisible ":"visible ") + (isLoading ? "opacity-100" : "opacity-0") + " transition-opacity ease-in-out duration-1000 size-full bg-black absolute top-0 left-0 z-10 flex"}>
         <svg version="1.0" xmlns="http://www.w3.org/2000/svg" className="m-auto fill-transparent" viewBox='40 0 335 450' height="50vh" width="50vw">
             <g transform="scale(1.0,1.0)">
             <path id="check2" stroke="white" strokeWidth="5" className="animate-[move_5s_linear_alternate_forwards_infinite]" 

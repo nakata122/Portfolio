@@ -71,12 +71,12 @@ function Spheres({count, radius, isLoading}) {
   useFrame(({clock, raycaster}) => {
     if(!mesh.current) return;
     
-    if(!isLoading) {
-      // camera.position.set(Math.sin(clock.elapsedTime * 0.1) * 5, 0, Math.cos(clock.elapsedTime * 0.1) * 5 );
-      camera.position.lerp(particles[1].start.clone().add(new THREE.Vector3(5, 0 ,0)),animation);
-      camera.lookAt(new THREE.Vector3(0,0,0));
-      animation += (clock.elapsedTime - lastTime) * 0.001;
-    }
+    // if(!isLoading) {
+    //   // camera.position.set(Math.sin(clock.elapsedTime * 0.1) * 5, 0, Math.cos(clock.elapsedTime * 0.1) * 5 );
+    //   camera.position.lerp(particles[1].start.clone().add(new THREE.Vector3(5, 0 ,0)),animation);
+    //   camera.lookAt(new THREE.Vector3(0,0,0));
+    //   animation += (clock.elapsedTime - lastTime) * 0.001;
+    // }
     
     lastTime = clock.elapsedTime;
   })

@@ -16,8 +16,13 @@
   }
 }
 
-body{
-  margin: 0;
+body,html{
+  margin: 0px;
+  padding: 0px;
+  /* scroll-snap-type: y mandatory;
+  scroll-snap-points-y: repeat(100vh);
+  scroll-snap-align: start;
+  scroll-snap-stop: always; */
 }
 
 @layer utilities {
