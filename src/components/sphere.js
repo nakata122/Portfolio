@@ -4,14 +4,19 @@ import { Text } from '@react-three/drei';
 import { ReactThreeFiber, useLoader } from '@react-three/fiber'
 import {  useThree, useFrame } from '@react-three/fiber'
 import { MeshDistortMaterial, Line } from "@react-three/drei";
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 
-function Spheres({count, radius, isLoading}) {
+function Spheres({count, radius}) {
   const mesh = useRef();
   const mesh2 = useRef();
   const { scene, camera } = useThree();
-  let animation = 0, lastTime = 0;
-  camera.position.set(0,0,68);
+  const target = useMemo(() => {return {val: new THREE.Vector3()}}, []);
+  let lastTime = 0;
+
+  gsap.registerPlugin(ScrollTrigger);
 
   const dummy = useMemo(() => new THREE.Object3D(), []);
 
@@ -49,6 +54,50 @@ function Spheres({count, radius, isLoading}) {
     }
     return temp
   }, [count, radius])
+  
+  useGSAP(
+    () => {
+        // gsap code here...
+        let tl = gsap.timeline({
+          scrollTrigger: {
+            start: 'top top',
+            end: '+=4000',
+            onUpdate: (self)=>{
+              console.log(self.progress)
+            },
+            markers: true,
+            scrub: 1
+            
+          } 
+        });
+        tl.set(camera.position, {x:0,y:0,z:68});
+        particles.forEach((particle, i) => {
+          tl.to(camera.position, { x: Math.sin(2 * Math.PI / count * (i+1)) * radius * 7, 
+                                     y: Math.cos(2 * Math.PI / count * (i+1)) * radius * 7, 
+                                     z: 0 });
+          tl.to(target.val, { x: particle.start.x, 
+          y: particle.start.y, 
+          z: particle.start.z }, '<');
+        });
+
+        // let tl2 = gsap.timeline({
+        //   scrollTrigger: {
+        //     start: 'top top',
+        //     end: '+=4000',
+        //     markers: true,
+        //     scrub: 1
+        //   } 
+        // });
+        // tl2.set(target.val, {x: 0, y: 0, z: 0});
+        // particles.forEach((particle, i) => {
+        //   tl2.to(target.val, { x: 100, 
+        //                       y: particle.start.y, 
+        //                       z: particle.start.z });
+        // });
+        // ScrollTrigger.refresh();
+    },
+    {particles}
+  );
 
   useEffect(() => {
     // Go through each particle
@@ -74,8 +123,12 @@ function Spheres({count, radius, isLoading}) {
     // if(!isLoading) {
     //   // camera.position.set(Math.sin(clock.elapsedTime * 0.1) * 5, 0, Math.cos(clock.elapsedTime * 0.1) * 5 );
     //   camera.position.lerp(particles[1].start.clone().add(new THREE.Vector3(5, 0 ,0)),animation);
-    //   camera.lookAt(new THREE.Vector3(0,0,0));
-    //   animation += (clock.elapsedTime - lastTime) * 0.001;
+      // camera.getWorldDirection(camera.up);
+      camera.lookAt(target.val);
+      console.log(target.val);
+      camera.up.y = Math.max(-1, Math.min(1, camera.rotation.y)); //THIS TOOK ME 3 HOURS TO FIX
+      // camera.rotation.y = Math.PI / 2;
+      // animation += (clock.elapsedTime - lastTime) * 0.1;
     // }
     
     lastTime = clock.elapsedTime;

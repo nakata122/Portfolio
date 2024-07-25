@@ -19,7 +19,7 @@ export default function Home() {
   // colorMap.repeat.set(5, 5);
   // colorMap.wrapS = colorMap.wrapT = THREE.RepeatWrapping;
   const [isLoading, setIsLoading] = useState(true);
-  const container = useRef();
+  const container = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
     setTimeout(() => {setIsLoading(false); console.log("false now");}, 4000);
@@ -30,15 +30,19 @@ export default function Home() {
   useGSAP(
     () => {
         // gsap code here...
-        gsap.fromTo('section', { x: 0 }, { x:100, duration: 1, scrollTrigger: {
-          trigger: 'section',
-          start: '100px top',
-          end: 'bottom middle',
-          markers: true,
-          scrub:true
-      } });
+        const sections = gsap.utils.toArray('section');
+        sections.forEach(section => {
+          gsap.fromTo(section, { x: 0 }, { x:100, scrollTrigger: {
+              trigger: section,
+              start: 'top top',
+              end: 'bottom',
+              // markers: true,
+              scrub:true
+          } });
+        })
+        
     },
-    { scope: container}
+    {}
   );
 
   return (
@@ -50,7 +54,7 @@ export default function Home() {
           <color attach="background" args={["black"]} />
           <Environment files="./sky2.hdr" background backgroundIntensity={0.1} backgroundBlurriness={0.1}/>
           <Environment files="./web.hdr" />
-          <OrbitControls />
+          {/* <OrbitControls /> */}
           <ambientLight intensity={0.1} />
           {/* <directionalLight color={new THREE.Color("white")} position={[0, 5, 5]} /> */}
           <EffectComposer autoClear={false}>
@@ -63,7 +67,7 @@ export default function Home() {
             <ToneMapping />
             {/* <Vignette eskil={true} darkness={0.8} offset={3}/> */}
           </EffectComposer>
-          <Spheres count={8} radius={3} isLoading={isLoading}/>
+          <Spheres count={8} radius={3}/>
           <Particles count={200} />
           {/* <fogExp2 attach="fog" color="black" density={0.05} /> */}
         </Canvas>
@@ -78,6 +82,18 @@ export default function Home() {
 
       <section className="flex z-10 text-5xl h-screen">
         <h1 className="m-auto">Hey I am Naiden</h1>
+      </section>
+      <section className="flex flex-col z-10 text-lg h-screen">
+        <h1 className="m-auto">Projects</h1>
+        <p className="m-auto">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer non laoreet ex. Morbi eget commodo turpis. Duis lobortis nunc sit amet nulla interdum auctor. Ut et libero eu felis accumsan rutrum nec vel velit.</p>
+      </section>
+      <section className="flex flex-col z-10 text-lg h-screen">
+        <h1 className="m-auto">Projects</h1>
+        <p className="m-auto">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer non laoreet ex. Morbi eget commodo turpis. Duis lobortis nunc sit amet nulla interdum auctor. Ut et libero eu felis accumsan rutrum nec vel velit.</p>
+      </section>
+      <section className="flex flex-col z-10 text-lg h-screen">
+        <h1 className="m-auto">Projects</h1>
+        <p className="m-auto">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer non laoreet ex. Morbi eget commodo turpis. Duis lobortis nunc sit amet nulla interdum auctor. Ut et libero eu felis accumsan rutrum nec vel velit.</p>
       </section>
       <section className="flex flex-col z-10 text-lg h-screen">
         <h1 className="m-auto">Projects</h1>
