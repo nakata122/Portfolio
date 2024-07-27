@@ -20,17 +20,17 @@ function Particles({count}) {
     const temp = [];
     for (let i = 0; i < count; i++) {
       const speed = (Math.random()) * 2;
-      const rotation = new THREE.Vector3(0,0,0);
+      const size = 1.0;
       const phi = Math.random() * Math.PI * 2;
       const radius = (Math.random() * 0.7 +0.3) * 15;
       const start = new THREE.Vector3(
         (Math.sin(phi)) * radius * 5,
         (Math.cos(phi)) * radius * 5,
-        (Math.random()-0.5) * radius * 5
+        (Math.random()-0.5) * radius * 3
       );
       
 
-      temp.push({ start, phi, radius, speed, rotation });
+      temp.push({ start, phi, radius, speed, size });
     }
     return temp
   }, [count])
@@ -65,22 +65,26 @@ function Particles({count}) {
     // Go through each particle
     particles.forEach((particle, i) => {
       
-      let { start, phi, rotation, radius } = particle;
+      let { start, phi, size, radius } = particle;
       // Change position
-      dummy.position.copy(new THREE.Vector3(
+      let newPos = new THREE.Vector3(
         (Math.sin(phi)) * radius * 5,
         (Math.cos(phi)) * radius * 5,
         start.z
-      ));
-      dummy.scale.set(1,1,1);
+      );
+      dummy.position.copy(newPos);
+      let animatedSize = Math.sin(radius/15 * Math.PI * 2 + size) + 1;
+      dummy.scale.set(animatedSize, animatedSize, animatedSize);
       dummy.updateMatrix();
       // And apply the matrix to the instanced mesh
       mesh?.current.setMatrixAt(i, dummy.matrix);
+      mesh?.current.setColorAt(i, new THREE.Color("hsl(0, 100%, " + 100 + "%)"))
 
       
       particle.phi += 0.1 * (clock.elapsedTime - lastTime) * particle.speed;
-      particle.radius -= 0.1 * (clock.elapsedTime - lastTime) * particle.speed;
-      particle.rotation.add(new THREE.Vector3(1 * (clock.elapsedTime - lastTime),2 * (clock.elapsedTime - lastTime),0));
+      particle.size += (clock.elapsedTime - lastTime);
+      // particle.radius -= 0.1 * (clock.elapsedTime - lastTime) * particle.speed;
+      // particle.rotation.add(new THREE.Vector3(1 * (clock.elapsedTime - lastTime),2 * (clock.elapsedTime - lastTime),0));
     })
     mesh.current.instanceMatrix.needsUpdate = true;
     lines?.current.rotateZ(-0.1 * (clock.elapsedTime - lastTime));
@@ -89,7 +93,7 @@ function Particles({count}) {
   })
   return (
     <>
-      <instancedMesh ref={mesh} geometry={new THREE.IcosahedronGeometry(0.1,1)} args={[null, null, count]}>
+      <instancedMesh ref={mesh} geometry={new THREE.IcosahedronGeometry(0.3,1)} args={[null, null, count]}>
         <meshBasicMaterial attach="material" map={sky} color={0x808080}/>
       </instancedMesh>
       <Line

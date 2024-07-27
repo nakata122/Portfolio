@@ -13,11 +13,13 @@ function Spheres({count, radius}) {
   const mesh = useRef();
   const mesh2 = useRef();
   const { scene, camera } = useThree();
-  const target = useMemo(() => {return {val: new THREE.Vector3()}}, []);
+  camera.near = 0.01;
   let lastTime = 0;
-
+  camera.position.set(0.01,0.01,68);
   gsap.registerPlugin(ScrollTrigger);
 
+  const face = useLoader(THREE.TextureLoader, 'random-guy.jpg');
+  const target = useMemo(() => {return {val: new THREE.Vector3()}}, []);
   const dummy = useMemo(() => new THREE.Object3D(), []);
 
   const particles = useMemo(() => {
@@ -60,46 +62,28 @@ function Spheres({count, radius}) {
         // gsap code here...
         let tl = gsap.timeline({
           scrollTrigger: {
+            trigger: '#container',
             start: 'top top',
-            end: '+=4000',
-            onUpdate: (self)=>{
-              console.log(self.progress)
-            },
-            markers: true,
-            scrub: 1
+            end: 'bottom',
+            // markers: true,
+            scrub: true
             
           } 
         });
-        tl.set(camera.position, {x:0,y:0,z:68});
+        tl.set(camera.position, {x:0.01,y:0.01,z:68});
         particles.forEach((particle, i) => {
-          tl.to(camera.position, { x: Math.sin(2 * Math.PI / count * (i+1)) * radius * 7, 
-                                     y: Math.cos(2 * Math.PI / count * (i+1)) * radius * 7, 
-                                     z: 0 });
-          tl.to(target.val, { x: particle.start.x, 
-          y: particle.start.y, 
-          z: particle.start.z }, '<');
+          tl.to(camera.position, {  x: Math.sin(2 * Math.PI / count * (i+2)) * radius * 6.5+0.01, 
+                                    y: Math.cos(2 * Math.PI / count * (i+2)) * radius * 6.5+0.01, 
+                                    z: 0 });
+          tl.to(target.val,  particles[(i+1)%count].start, '<');
         });
-
-        // let tl2 = gsap.timeline({
-        //   scrollTrigger: {
-        //     start: 'top top',
-        //     end: '+=4000',
-        //     markers: true,
-        //     scrub: 1
-        //   } 
-        // });
-        // tl2.set(target.val, {x: 0, y: 0, z: 0});
-        // particles.forEach((particle, i) => {
-        //   tl2.to(target.val, { x: 100, 
-        //                       y: particle.start.y, 
-        //                       z: particle.start.z });
-        // });
-        // ScrollTrigger.refresh();
+        console.log(tl);
     },
-    {particles}
+    [particles]
   );
 
   useEffect(() => {
+
     // Go through each particle
     particles.forEach((particle, i) => {
       
@@ -125,8 +109,9 @@ function Spheres({count, radius}) {
     //   camera.position.lerp(particles[1].start.clone().add(new THREE.Vector3(5, 0 ,0)),animation);
       // camera.getWorldDirection(camera.up);
       camera.lookAt(target.val);
-      console.log(target.val);
-      camera.up.y = Math.max(-1, Math.min(1, camera.rotation.y)); //THIS TOOK ME 3 HOURS TO FIX
+      // console.log(camera.position);
+      // camera.up.y = Math.max(-1, Math.min(1, camera.rotation.y)); //THIS TOOK ME 3 HOURS TO FIX
+      camera.up.y = camera.rotation.y > 0 ? 1 : -1;
       // camera.rotation.y = Math.PI / 2;
       // animation += (clock.elapsedTime - lastTime) * 0.1;
     // }
@@ -136,7 +121,7 @@ function Spheres({count, radius}) {
   return (
     <>
     
-      <instancedMesh ref={mesh2} geometry={new THREE.IcosahedronGeometry(3,20)} args={[null, null, count]}>
+      <instancedMesh ref={mesh2} geometry={new THREE.IcosahedronGeometry(3,20)} args={[null, null, count]} frustumCulled={false}>
         <MeshDistortMaterial 
           color={new THREE.Color("black")}
           distort={0.25} 
@@ -148,7 +133,7 @@ function Spheres({count, radius}) {
           metalness={1.0}
         />
       </instancedMesh>
-      <instancedMesh ref={mesh} geometry={new THREE.IcosahedronGeometry(3,20)} args={[null, null, count]}>
+      <instancedMesh ref={mesh} geometry={new THREE.IcosahedronGeometry(3,20)} args={[null, null, count]} frustumCulled={false}>
         <MeshDistortMaterial 
           color={new THREE.Color("black")}
           distort={0.2} 
@@ -161,6 +146,9 @@ function Spheres({count, radius}) {
         />
       </instancedMesh>
 
+      <mesh geometry={new THREE.PlaneGeometry(2,3)} position={particles[1].start} rotation={[0, Math.PI / 2, 0]}>
+        <meshStandardMaterial map={face} />
+      </mesh>
 
       <Line
           points={vertices}       // Array of points, Array<Vector3 | Vector2 | [number, number, number] | [number, number] | number>
