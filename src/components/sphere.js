@@ -11,7 +11,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 function Spheres({count, radius}) {
   const mesh = useRef();
-  const mesh2 = useRef();
   const { scene, camera } = useThree();
   camera.near = 0.01;
   let lastTime = 0;
@@ -19,12 +18,16 @@ function Spheres({count, radius}) {
   gsap.registerPlugin(ScrollTrigger);
 
   const face = useLoader(THREE.TextureLoader, 'random-guy.jpg');
+  const displacement = useLoader(THREE.TextureLoader, 'perlin_noise.png');
+  displacement.wrapS = THREE.RepeatWrapping;
+  displacement.wrapT = THREE.RepeatWrapping;
   const target = useMemo(() => {return {val: new THREE.Vector3()}}, []);
   const dummy = useMemo(() => new THREE.Object3D(), []);
 
   const particles = useMemo(() => {
     const temp = [];
     for (let i = 1; i <= count; i++) {
+      const scale = 1;
       const start = new THREE.Vector3(
         Math.sin(2 * Math.PI / count * i) * radius * 5,
         Math.cos(2 * Math.PI / count * i) * radius * 5,
@@ -32,8 +35,9 @@ function Spheres({count, radius}) {
       );
       
 
-      temp.push({ start });
+      temp.push({ start, scale });
     }
+    
     return temp
   }, [count, radius])
 
@@ -87,52 +91,30 @@ function Spheres({count, radius}) {
     // Go through each particle
     particles.forEach((particle, i) => {
       
-      let { start } = particle;
+      let { start, scale } = particle;
       dummy.position.copy(start);
-      dummy.scale.set(1,1,1);
+      dummy.scale.set(scale, scale, scale);
       dummy.updateMatrix();
       mesh?.current.setMatrixAt(i, dummy.matrix);
       
-      dummy.scale.set(0.95,0.95,0.95);
-      dummy.updateMatrix();
-      mesh2?.current.setMatrixAt(i, dummy.matrix);
     })
     mesh.current.instanceMatrix.needsUpdate = true;
-    mesh2.current.instanceMatrix.needsUpdate = true;
   })
 
   useFrame(({clock, raycaster}) => {
     if(!mesh.current) return;
     
-    // if(!isLoading) {
-    //   // camera.position.set(Math.sin(clock.elapsedTime * 0.1) * 5, 0, Math.cos(clock.elapsedTime * 0.1) * 5 );
-    //   camera.position.lerp(particles[1].start.clone().add(new THREE.Vector3(5, 0 ,0)),animation);
-      // camera.getWorldDirection(camera.up);
-      camera.lookAt(target.val);
+    camera.lookAt(new THREE.Vector3(0,0,0));
+      // camera.lookAt(target.val);
       // console.log(camera.position);
       // camera.up.y = Math.max(-1, Math.min(1, camera.rotation.y)); //THIS TOOK ME 3 HOURS TO FIX
       camera.up.y = camera.rotation.y > 0 ? 1 : -1;
-      // camera.rotation.y = Math.PI / 2;
-      // animation += (clock.elapsedTime - lastTime) * 0.1;
-    // }
+    displacement.offset.y -= (lastTime - clock.elapsedTime) * 0.03;
     
     lastTime = clock.elapsedTime;
   })
   return (
     <>
-    
-      <instancedMesh ref={mesh2} geometry={new THREE.IcosahedronGeometry(3,20)} args={[null, null, count]} frustumCulled={false}>
-        <MeshDistortMaterial 
-          color={new THREE.Color("black")}
-          distort={0.25} 
-          speed={1.5} 
-          transparent 
-          side={THREE.DoubleSide} 
-          opacity={0.5}
-          roughness={0.0}
-          metalness={1.0}
-        />
-      </instancedMesh>
       <instancedMesh ref={mesh} geometry={new THREE.IcosahedronGeometry(3,20)} args={[null, null, count]} frustumCulled={false}>
         <MeshDistortMaterial 
           color={new THREE.Color("black")}
@@ -143,11 +125,25 @@ function Spheres({count, radius}) {
           opacity={0.5}
           roughness={0.0}
           metalness={1.0}
+          reflectivity={1.0}
         />
       </instancedMesh>
 
       <mesh geometry={new THREE.PlaneGeometry(2,3)} position={particles[1].start} rotation={[0, Math.PI / 2, 0]}>
         <meshStandardMaterial map={face} />
+      </mesh>
+
+      <mesh geometry={new THREE.CylinderGeometry(100, 100, 800, 1000, 1000, true)} position={[0,0,0]} rotation={[-Math.PI/2, 0, 0]}>
+      <meshStandardMaterial 
+          color={new THREE.Color(0x404040)}
+          aoMap={displacement}
+          lightMap={displacement}
+          displacementMap={displacement}
+          displacementScale={50}
+          flatShading={true}
+          roughness={0.6}
+          side={THREE.BackSide}
+        />
       </mesh>
 
       <Line

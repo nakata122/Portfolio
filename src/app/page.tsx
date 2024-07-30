@@ -1,8 +1,8 @@
 'use client'
 import * as THREE from "three"
 import { Canvas, useLoader } from "@react-three/fiber";
-import { Suspense, useEffect, useRef, useState } from "react";
-import { Environment, OrbitControls } from '@react-three/drei'
+import { Suspense, useEffect, useRef, useState, useCallback } from "react";
+import { Environment, OrbitControls, Stats } from '@react-three/drei'
 import { EffectComposer, Bloom, ToneMapping, DepthOfField} from '@react-three/postprocessing'
 import {  useThree, useFrame } from '@react-three/fiber'
 import { Particles } from '../components/particleSystems'
@@ -18,11 +18,11 @@ import { contain } from "three/src/extras/TextureUtils.js";
 export default function Home() {
   // colorMap.repeat.set(5, 5);
   // colorMap.wrapS = colorMap.wrapT = THREE.RepeatWrapping;
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const container = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
-    setTimeout(() => {setIsLoading(false); console.log("false now");}, 4000);
+    setTimeout(() => setIsLoading(false), 4000);
   }, [isLoading]);
   
   gsap.registerPlugin(ScrollTrigger);
@@ -52,29 +52,30 @@ export default function Home() {
         <Canvas>
           <Suspense fallback={null} />
           <color attach="background" args={["black"]} />
+          <Stats />
           <Environment files="./sky2.hdr" background backgroundIntensity={0.1} backgroundBlurriness={0.1}/>
           <Environment files="./web.hdr" />
           {/* <OrbitControls /> */}
-          <ambientLight intensity={0.1} />
-          {/* <directionalLight color={new THREE.Color("white")} position={[0, 5, 5]} /> */}
-          <EffectComposer autoClear={false}>
+          {/* <ambientLight intensity={0.1} /> */}
+          <directionalLight intensity={0.2} position={[0, 0, -50]} />
+          <EffectComposer>
             <Bloom 
               mipmapBlur
-              intensity={100}
+              intensity={50}
               levels={3}
               luminanceThreshold={0}
               />
             <ToneMapping />
             {/* <Vignette eskil={true} darkness={0.8} offset={3}/> */}
           </EffectComposer>
+          {/* <Particles count={2500} /> */}
           <Spheres count={8} radius={3}/>
-          <Particles count={200} />
-          {/* <fogExp2 attach="fog" color="black" density={0.05} /> */}
+          {/* <fogExp2 attach="fog" color="black" density={0.005} /> */}
         </Canvas>
       </div>
       
       <section className="flex items-center justify-center flex-col z-10 text-xl h-screen">
-        {/* <h1 className="mb-10 mx-auto">Welcome</h1> */}
+        <h1 className="mb-10 mx-auto font-medium">SCROLL DOWN</h1>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="mx-auto size-6 animate-bounce">
           <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3" />
         </svg>
