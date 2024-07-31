@@ -29,24 +29,35 @@ export default function Home() {
 
   useGSAP(
     () => {
-        // gsap code here...
-        const sections:HTMLTableSectionElement[] = gsap.utils.toArray('section');
-        sections.forEach(section => {
-          gsap.fromTo(section, { x: 100, opacity: 0 }, { x:0, opacity:1, scrollTrigger: {
-              trigger: section,
-              start: 'top-=100px top',
-              end: 'top',
-              markers: true,
-              scrub:true
-          } });
-        })
-        
+      let tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: '#container',
+          start: 'top top',
+          end: () => '+=' + window.innerHeight * 8,
+          markers: true,
+          scrub: 1,
+          pin: '#container'
+        } 
+      });
+      // console.log(tl.endTime());
+      tl.to('#scrollSection', {
+        y: -100,
+        opacity: 0});
+      
+      gsap.set('#titleSection h1', {perspective: 900});
+      const items = gsap.utils.toArray('#titleSection h1 div');
+      tl.fromTo(items[0], {y: 100, rotationX:-90, scaleX: '70%', opacity: 0}, {y: 0, rotationX: 0, scaleX: '100%', opacity: 1}, '<');
+      tl.fromTo(items[1], {y: 100, rotationX:-90, scaleX: '70%', opacity: 0}, {y: 0, rotationX: 0, scaleX: '100%', opacity: 1}, '<+=0.1');
+
+      tl.fromTo('#aboutSection',
+        {x: 100, opacity:0}, 
+        {x: 0, opacity: 1 });
     },
     {}
   );
 
   return (
-    <div id="container" className="flex flex-col bg-black text-white"  ref={container}>
+    <div id="container" className="flex flex-col items-center bg-black text-white h-screen w-full"  ref={container}>
       <Splash isLoading={isLoading} />
       <div className="fixed top-0 left-0 h-screen z-0 size-full">
         <Canvas>
@@ -57,7 +68,7 @@ export default function Home() {
           <Environment files="./web.hdr" />
           {/* <OrbitControls /> */}
           {/* <ambientLight intensity={0.1} /> */}
-          <directionalLight intensity={0.2} position={[0, 0, -50]} />
+          {/* <directionalLight intensity={0.2} position={[0, 0, -50]} /> */}
           <EffectComposer>
             <Bloom 
               mipmapBlur
@@ -68,53 +79,34 @@ export default function Home() {
             <ToneMapping />
             {/* <Vignette eskil={true} darkness={0.8} offset={3}/> */}
           </EffectComposer>
-          {/* <Particles count={2500} /> */}
+          <Particles count={2500} />
           <Spheres count={8} radius={3}/>
           {/* <fogExp2 attach="fog" color="black" density={0.005} /> */}
         </Canvas>
       </div>
       
-      <section className="flex items-center justify-center flex-col z-10 text-xl h-screen">
-        <h1 className="mb-10 mx-auto font-medium">SCROLL DOWN</h1>
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="mx-auto size-6 animate-bounce">
+      <section id="titleSection" className="flex justify-around gap-20 z-10 absolute w-full top-1/2 -translate-y-1/2 font-oswald">
+        <h1 className="text-[8vw]"><div>CREATIVE</div></h1>
+        <h1 className="mt-[50vh] text-[8vw]"><div>DEVELOPER</div></h1>
+      </section>
+
+      <section id="scrollSection" className="flex flex-col items-center z-10 absolute bottom-10">
+        <h1 className="mb-5 font-sm">SCROLL DOWN</h1>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6 animate-bounce">
           <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3" />
         </svg>
       </section>
 
-      <section className="z-10 h-screen m-auto">
-        <div className=" mr-56 mt-48 w-64">
+      <section id="aboutSection" className="flex flex-col z-10 absolute">
+        <div className="w-64">
           <h1 className="text-3xl border-b-2">Naiden Naidenov</h1>
-          <p className="text-lg backdrop-blur-sm">Creative developer with a passion in computer graphics</p>
+          <p className="text-lg">Creative developer with a passion in computer graphics</p>
         </div>
         
-        <div className="ml-64 mt-48 w-64">
+        <div className="w-64">
           <h1 className="text-3xl border-b-2 w-40">What I do</h1>
-          <p className="text-lg backdrop-blur-sm">I specialise in creating interactive and immersive web experiences using next.js and three.js</p>
+          <p className="text-lg">I specialise in creating interactive and immersive web experiences using next.js and three.js</p>
         </div>
-      </section>
-      <section className="flex flex-col z-10 text-lg h-screen">
-        <h1 className="m-auto">Projects</h1>
-        <p className="m-auto">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer non laoreet ex. Morbi eget commodo turpis. Duis lobortis nunc sit amet nulla interdum auctor. Ut et libero eu felis accumsan rutrum nec vel velit.</p>
-      </section>
-      <section className="flex flex-col z-10 text-lg h-screen">
-        <h1 className="m-auto">Projects</h1>
-        <p className="m-auto">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer non laoreet ex. Morbi eget commodo turpis. Duis lobortis nunc sit amet nulla interdum auctor. Ut et libero eu felis accumsan rutrum nec vel velit.</p>
-      </section>
-      <section className="flex flex-col z-10 text-lg h-screen">
-        <h1 className="m-auto">Projects</h1>
-        <p className="m-auto">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer non laoreet ex. Morbi eget commodo turpis. Duis lobortis nunc sit amet nulla interdum auctor. Ut et libero eu felis accumsan rutrum nec vel velit.</p>
-      </section>
-      <section className="flex flex-col z-10 text-lg h-screen">
-        <h1 className="m-auto">Projects</h1>
-        <p className="m-auto">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer non laoreet ex. Morbi eget commodo turpis. Duis lobortis nunc sit amet nulla interdum auctor. Ut et libero eu felis accumsan rutrum nec vel velit.</p>
-      </section>
-      <section className="flex flex-col z-10 text-lg h-screen">
-        <h1 className="m-auto">Projects</h1>
-        <p className="m-auto">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer non laoreet ex. Morbi eget commodo turpis. Duis lobortis nunc sit amet nulla interdum auctor. Ut et libero eu felis accumsan rutrum nec vel velit.</p>
-      </section>
-      <section className="flex flex-col z-10 text-lg h-screen">
-        <h1 className="m-auto">Projects</h1>
-        <p className="m-auto">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer non laoreet ex. Morbi eget commodo turpis. Duis lobortis nunc sit amet nulla interdum auctor. Ut et libero eu felis accumsan rutrum nec vel velit.</p>
       </section>
     </div>
   );

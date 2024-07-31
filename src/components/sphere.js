@@ -61,30 +61,30 @@ function Spheres({count, radius}) {
     return temp
   }, [count, radius])
   
-  useGSAP(
-    () => {
-        // gsap code here...
-        let tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: '#container',
-            start: 'top top',
-            end: 'bottom',
-            // markers: true,
-            scrub: true
+  // useGSAP(
+  //   () => {
+  //       let tl = gsap.timeline({
+  //         scrollTrigger: {
+  //           trigger: '#container',
+  //           start: 'top top',
+  //           end: 'bottom',
+  //           // markers: true,
+  //           scrub: 1
             
-          } 
-        });
-        tl.set(camera.position, {x:0.01,y:0.01,z:68});
-        particles.forEach((particle, i) => {
-          tl.to(camera.position, {  x: Math.sin(2 * Math.PI / count * (i+2)) * radius * 6.5+0.01, 
-                                    y: Math.cos(2 * Math.PI / count * (i+2)) * radius * 6.5+0.01, 
-                                    z: 0 });
-          tl.to(target.val,  particles[(i+1)%count].start, '<');
-        });
-        console.log(tl);
-    },
-    [particles]
-  );
+  //         } 
+  //       });
+  //       tl.set(camera.position, {x:0.01,y:0.01,z:68});
+  //       particles.forEach((particle, i) => {
+  //         tl.to(camera.position, {  x: Math.sin(2 * Math.PI / count * (i+2)) * radius * 6.5+0.01, 
+  //                                   y: Math.cos(2 * Math.PI / count * (i+2)) * radius * 6.5+0.01, 
+  //                                   z: 0,
+  //                                   ease:'expo.inOut' });
+  //         tl.to(target.val,  particles[(i+1)%count].start, '<');
+  //       });
+  //       console.log(tl);
+  //   },
+  //   [particles]
+  // );
 
   useEffect(() => {
 
@@ -108,13 +108,13 @@ function Spheres({count, radius}) {
       // camera.lookAt(target.val);
       // console.log(camera.position);
       // camera.up.y = Math.max(-1, Math.min(1, camera.rotation.y)); //THIS TOOK ME 3 HOURS TO FIX
-      camera.up.y = camera.rotation.y > 0 ? 1 : -1;
+      // camera.up.y = camera.rotation.y > 0 ? 1 : -1;
     displacement.offset.y -= (lastTime - clock.elapsedTime) * 0.03;
     
     lastTime = clock.elapsedTime;
   })
   return (
-    <>
+    <group>
       <instancedMesh ref={mesh} geometry={new THREE.IcosahedronGeometry(3,20)} args={[null, null, count]} frustumCulled={false}>
         <MeshDistortMaterial 
           color={new THREE.Color("black")}
@@ -125,7 +125,6 @@ function Spheres({count, radius}) {
           opacity={0.5}
           roughness={0.0}
           metalness={1.0}
-          reflectivity={1.0}
         />
       </instancedMesh>
 
@@ -133,7 +132,7 @@ function Spheres({count, radius}) {
         <meshStandardMaterial map={face} />
       </mesh>
 
-      <mesh geometry={new THREE.CylinderGeometry(100, 100, 800, 1000, 1000, true)} position={[0,0,0]} rotation={[-Math.PI/2, 0, 0]}>
+      {/* <mesh geometry={new THREE.CylinderGeometry(100, 100, 800, 1000, 1000, true)} position={[0,0,0]} rotation={[-Math.PI/2, 0, 0]}>
       <meshStandardMaterial 
           color={new THREE.Color(0x404040)}
           aoMap={displacement}
@@ -144,7 +143,7 @@ function Spheres({count, radius}) {
           roughness={0.6}
           side={THREE.BackSide}
         />
-      </mesh>
+      </mesh> */}
 
       <Line
           points={vertices}       // Array of points, Array<Vector3 | Vector2 | [number, number, number] | [number, number] | number>
@@ -153,33 +152,7 @@ function Spheres({count, radius}) {
           segments={true}                        // If true, renders a THREE.LineSegments2. Otherwise, renders a THREE.Line2
           
         />
-        {/* <mesh ref={mesh}>
-            <icosahedronGeometry args={[2.5, 20]}/>
-            <MeshDistortMaterial 
-              color={new THREE.Color("black")}
-              distort={0.2} 
-              speed={1} 
-              transparent 
-              side={THREE.DoubleSide} 
-              opacity={0.5}
-              roughness={0.0}
-              metalness={1.0}
-            />
-          </mesh>
-          <mesh>
-            <icosahedronGeometry args={[3, 20]}/>
-            <MeshDistortMaterial 
-              color={new THREE.Color("black")}
-              distort={0.15} 
-              speed={2} 
-              transparent 
-              side={THREE.DoubleSide} 
-              opacity={0.5}
-              roughness={0.0}
-              metalness={1.0}
-            />
-          </mesh> */}
-    </>
+    </group>
   )
 }
 
