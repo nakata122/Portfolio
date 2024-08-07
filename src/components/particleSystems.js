@@ -69,19 +69,20 @@ function Particles({count}) {
   const particlesPosition = useMemo(() => {
     const positions = new Float32Array(count * 3);
     for (let i = 0; i < count; i++) {
-      const phi = i/count * Math.PI *2 - 0.2;
-      const radius = i/count * 8;
+      const phi = i/count * Math.PI + 0.2;
+      const radius = i/count * 16;
 
       // positions.set([
       //   Math.pow(Math.random(), 2)*Math.random()*radius + (Math.sin(phi + (i % 4) * Math.PI/2)) * radius * 5,
       //   Math.pow(Math.random(), 2)*Math.random()*radius + (Math.cos(phi + (i % 4) * Math.PI/2)) * radius * 5,
       //   Math.pow(Math.random(), 2)*Math.random()*radius], i*3);
 
+      
       positions.set([
-        particles[i].position.x,
-        particles[i].position.y,
-        particles[i].position.z
-      ], i*3);
+        Math.pow(Math.random(), 2)*Math.random()*radius + (Math.sin(phi + (i % 8) * Math.PI/4)) * radius * 5,
+        Math.pow(Math.random(), 2)*Math.random()*radius + (Math.cos(phi + (i % 8) * Math.PI/4)) * radius * 5,
+        (Math.random()-0.5)*radius*2], i*3);
+      
       
 
     }
@@ -136,49 +137,49 @@ function Particles({count}) {
     points.current.material.uniforms.uTime.value = clock.elapsedTime;
     
     // Go through each particle
-    particles.forEach((particle, i) => {
+    // particles.forEach((particle, i) => {
       
-      let { position, velocity, weight } = particle;
-      // Change position
-      for(let j=0; j < 8; j++) {
-        let speed = Math.min(1/Math.pow(holes[j].distanceTo(position),2), 1.0);
-        let direction = holes[j].clone().sub(position).normalize().multiplyScalar(speed);
+    //   let { position, velocity, weight } = particle;
+    //   // Change position
+    //   for(let j=0; j < 8; j++) {
+    //     let speed = Math.min(1/Math.pow(holes[j].distanceTo(position),2), 1.0);
+    //     let direction = holes[j].clone().sub(position).normalize().multiplyScalar(speed);
       
-        // let direction = position.clone().normalize();
-        particle.velocity.add(direction.multiplyScalar((clock.elapsedTime - lastTime)*0.1));
-      }
-      particle.position.add(particle.velocity);
-      // particle.position.add(new THREE.Vector3(Math.sin(particle.phi + 0.2)*15, Math.cos(particle.phi + 0.2)*15,0).normalize().multiplyScalar(0.1));
-      particle.life -= (clock.elapsedTime - lastTime) * 0.1;
-      // particle.phi += (clock.elapsedTime - lastTime);
+    //     // let direction = position.clone().normalize();
+    //     particle.velocity.add(direction.multiplyScalar((clock.elapsedTime - lastTime)*0.1));
+    //   }
+    //   particle.position.add(particle.velocity);
+    //   // particle.position.add(new THREE.Vector3(Math.sin(particle.phi + 0.2)*15, Math.cos(particle.phi + 0.2)*15,0).normalize().multiplyScalar(0.1));
+    //   particle.life -= (clock.elapsedTime - lastTime) * 0.1;
+    //   // particle.phi += (clock.elapsedTime - lastTime);
 
 
-      if(particle.life <= 0) {
-        particle.phi = Math.random() * Math.PI * 2;
-        // const radius = 200;
-        particle.life = Math.random()*0.2+0.8;
-        particle.velocity.set(0,0,0);
+    //   if(particle.life <= 0) {
+    //     particle.phi = Math.random() * Math.PI * 2;
+    //     // const radius = 200;
+    //     particle.life = Math.random()*0.2+0.8;
+    //     particle.velocity.set(0,0,0);
 
         
-      const phi = i/count * Math.PI;
-      const radius = i/count * 16;
+    //   const phi = i/count * Math.PI;
+    //   const radius = i/count * 16;
 
-      particle.position.set(
-        Math.pow(Math.random(), 2)*Math.random()*radius + (Math.sin(phi + (i % 8) * Math.PI/4)) * radius * 5,
-        Math.pow(Math.random(), 2)*Math.random()*radius + (Math.cos(phi + (i % 8) * Math.PI/4)) * radius * 5,
-        Math.pow(Math.random(), 2)*Math.random()*radius);
-      }
+    //   particle.position.set(
+    //     Math.pow(Math.random(), 2)*Math.random()*radius + (Math.sin(phi + (i % 8) * Math.PI/4)) * radius * 5,
+    //     Math.pow(Math.random(), 2)*Math.random()*radius + (Math.cos(phi + (i % 8) * Math.PI/4)) * radius * 5,
+    //     Math.pow(Math.random(), 2)*Math.random()*radius);
+    //   }
 
       
-      points.current.geometry.attributes.position.array[i*3] = particle.position.x;
-      points.current.geometry.attributes.position.array[i*3+1] = particle.position.y;
-      points.current.geometry.attributes.position.array[i*3+2] = particle.position.z;
-      points.current.geometry.attributes.aLife.array[i] = particle.life;
-      // particle.radius -= 0.1 * (clock.elapsedTime - lastTime) * particle.speed;
-      // particle.rotation.add(new THREE.Vector3(1 * (clock.elapsedTime - lastTime),2 * (clock.elapsedTime - lastTime),0));
-    });
-    // console.log(particlesPosition);
-    points.current.geometry.attributes.position.needsUpdate = true;
+    //   points.current.geometry.attributes.position.array[i*3] = particle.position.x;
+    //   points.current.geometry.attributes.position.array[i*3+1] = particle.position.y;
+    //   points.current.geometry.attributes.position.array[i*3+2] = particle.position.z;
+    //   points.current.geometry.attributes.aLife.array[i] = particle.life;
+    //   // particle.radius -= 0.1 * (clock.elapsedTime - lastTime) * particle.speed;
+    //   // particle.rotation.add(new THREE.Vector3(1 * (clock.elapsedTime - lastTime),2 * (clock.elapsedTime - lastTime),0));
+    // });
+    // // console.log(particlesPosition);
+    // points.current.geometry.attributes.position.needsUpdate = true;
     points.current.geometry.attributes.aLife.needsUpdate = true;
     // lines?.current.rotateZ(-0.1 * (clock.elapsedTime - lastTime));
 

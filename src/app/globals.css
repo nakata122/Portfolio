@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Archivo:ital,wght@0,100..900;1,100..900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -27,6 +27,19 @@ body,html{
   scroll-snap-points-y: repeat(100vh);
   scroll-snap-align: start;
   scroll-snap-stop: always; */
+}
+
+h1, h2, h3 {
+  font-family: 'Archivo Black';
+}
+
+p {
+  font-family: 'Archivo';
+}
+
+.icon:hover {
+  cursor: pointer;
+  filter: drop-shadow(0px 0px 5px rgb(255, 255, 255));
 }
 
 @layer utilities {

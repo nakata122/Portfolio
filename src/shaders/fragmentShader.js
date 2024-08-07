@@ -13,10 +13,10 @@ vec4 mixThreeColors(vec4 color1, vec4 color2, vec4 color3, float t) {
 void main() {
     
     // Map the noisy value to fire colors
-    vec4 color = mixThreeColors(vec4(0.01,0.01,0.01, 0.0), vec4(0.1,0.1,0.1, 1.0), vec4(0.1,0.1,0.1, 0.0), vLife);
+    vec4 color = mixThreeColors(vec4(0.0,0.0,0.0, 0.0), vec4(20.0, 20.0, 20.0, 1.0), vec4(0.0,0.0,0.0, 0.0), vLife);
     
     // Output the color
-    gl_FragColor = texture2D(myTex, gl_PointCoord/2.0 + vOffset);
+    gl_FragColor = texture2D(myTex, gl_PointCoord/2.0 + vOffset) * color;
   // gl_FragColor = texture2D(myTex, gl_PointCoord/2.0 + vOffset) * vec4(0.01,0.01,0.01, vLife);
   // gl_FragColor = texture2D(myTex, gl_PointCoord) * vec4(1.0, 1.0, 1.0, vLife);
 }`;

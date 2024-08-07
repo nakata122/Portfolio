@@ -8,7 +8,7 @@ const config: Config = {
   ],
   theme: {
     fontFamily: {
-      oswald: ['Oswald']
+      archivo: ['Archivo Black']
     },
     extend: {
       backgroundImage: {
