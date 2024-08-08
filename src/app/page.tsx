@@ -12,13 +12,15 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Splash from '../components/splashScreen'
 import Image from 'next/image';
 import { contain } from "three/src/extras/TextureUtils.js";
+import Link from "next/link";
 
 
 export default function Home() {
   // colorMap.repeat.set(5, 5);
   // colorMap.wrapS = colorMap.wrapT = THREE.RepeatWrapping;
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [dpr, setDpr] = useState(2);
+  const [showInfo, setShowInfo] = useState(-1);
   const container = useRef<HTMLDivElement>(null);
   const target = new THREE.Object3D();
   target.position.set(0,0,68);
@@ -29,6 +31,7 @@ export default function Home() {
   useEffect(() => {
     if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))
       setDpr(1.0);
+    document.body.onscroll = () => {setShowInfo(-1);}
     setTimeout(() => setIsLoading(false), 4000);
   }, [isLoading]);
 
@@ -88,6 +91,15 @@ export default function Home() {
     {}
   );
 
+  useGSAP(() => {
+    if(showInfo !== -1)
+    gsap.from('#info0', {
+      duration: 1,
+      opacity: 0,
+      x: 100
+    });
+  }, [showInfo]);
+
   return (
     <div id="container" className="flex flex-col items-center bg-black text-white h-screen w-full"  ref={container}>
       <Splash isLoading={isLoading} />
@@ -100,7 +112,7 @@ export default function Home() {
           {/* <Environment files="./sky2.hdr" background backgroundIntensity={0.1} backgroundBlurriness={0.1}/> */}
           <Environment files="./web2.hdr" environmentIntensity={2}/>
           {/* <OrbitControls /> */}
-          <ambientLight intensity={0.1} />
+          <ambientLight intensity={1.0} />
           <directionalLight intensity={0.03} position={[0, 0, -50]} />
           <EffectComposer>
             <Bloom 
@@ -110,7 +122,7 @@ export default function Home() {
               luminanceThreshold={1}
               />
           </EffectComposer>
-          <Spheres count={8} radius={15} />
+          <Spheres count={8} radius={15} showInfo={showInfo} setShowInfo={setShowInfo}/>
         </Canvas>
       </div>
       
@@ -142,7 +154,7 @@ export default function Home() {
         <div><h1 className="text-[7vw] top-16">ABOUT ME</h1></div>
         
         <div className="w-full sm:w-1/3 backdrop-blur-sm rounded-xl">
-          <p className="text-lg text-center ">Hi, I am Nayden Naydenov, freelance developer in my final year of a Computer Science degree. I specialise in creating interactive and immersive websites using next.js and three.js by bringing a unique blend of creativity and technical proficiency to every project.</p>
+          <p className="text-lg text-center">Hi, I am Nayden Naydenov, freelance developer in my final year of a Computer Science degree. I specialise in creating interactive and immersive websites using next.js and three.js by bringing a unique blend of creativity and technical proficiency to every project.</p>
           <p className="text-lg text-center">Feel free to contact me!</p>
           <div className="flex justify-evenly">
             <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="50" height="50" viewBox="0 0 50 50" fill="white" className="transition icon hover:scale-110">
@@ -161,6 +173,15 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      
+      {
+        showInfo !== -1 ? (
+        <section id="info0" className="flex items-center z-10 absolute h-full">
+          <p className="sm:w-[50%]"></p>
+          <p className="text-lg sm:text-left sm:w-[30%] md:w-[20%] sm:pt-0 w-full text-center pt-64">Lorem ipsum dolor sit amet consectetur adipisicing elit. Hic tempore tempora harum recusandae voluptatibus ullam reiciendis! Aperiam tempore minima praesentium recusandae suscipit. Magni ullam sint quae dicta velit eaque sunt!</p>
+        </section>):''
+      }
     </div>
   );
 }

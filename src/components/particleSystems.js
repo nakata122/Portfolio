@@ -26,7 +26,6 @@ function Particles({count}) {
         Math.cos(2 * Math.PI / 8 * i) * 15,
         0));
     }
-    console.log(temp);
     return temp;
   }, []);
 

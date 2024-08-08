@@ -1,4 +1,4 @@
-import React, { Suspense, useRef, useState, useEffect, useMemo, forwardRef } from 'react';
+import React, { Suspense, useRef, useState, useEffect, useMemo, forwardRef, Dispatch, SetStateAction } from 'react';
 import * as THREE from 'three';
 import { Text } from '@react-three/drei';
 import { ReactThreeFiber, ThreeEvent, useLoader } from '@react-three/fiber'
@@ -8,15 +8,17 @@ import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Particles } from '../components/particleSystems'
+import { SelectApi } from '@react-three/postprocessing';
 
 
-function Spheres({count, radius}: {count:number, radius:number}) {
+function Spheres({count, radius, showInfo, setShowInfo}: {count:number, radius:number, showInfo: number, setShowInfo:Dispatch<SetStateAction<number>>}) {
   const mesh = useRef<THREE.InstancedMesh>(null!);
   const group = useRef<THREE.Group>(null!);
   const orbits = useRef<THREE.Group>(null!);
   const { scene, camera } = useThree();
   camera.near = 0.01;
   let lastTime = 0;
+  const [lastClicked, setLastLicked] = useState<THREE.Object3D>(new THREE.Object3D());
   camera.position.set(0.01,0.01,68);
   gsap.registerPlugin(ScrollTrigger);
 
@@ -111,8 +113,14 @@ function Spheres({count, radius}: {count:number, radius:number}) {
 
           for(let i=0; i < orbit.children.length - 1; i++) {
             tl.add(() => {
-              videos[j*2+i].play();
-              videos[Math.abs(j*2+i-1)].pause();
+              if(tl.scrollTrigger?.direction === 1) {
+                videos[j*2+i].play();
+                videos[Math.abs(j*2+i-1)].pause();
+              }
+              else {
+                videos[Math.abs(j*2+i-1)].play();
+                videos[Math.abs(j*2+i)].pause();
+              }
             });
   
             tl.to(orbit.rotation, {  
@@ -186,6 +194,22 @@ function Spheres({count, radius}: {count:number, radius:number}) {
   const [hovered, setHovered] = useState(false);
   const over = (e: ThreeEvent<PointerEvent>) => {e.stopPropagation(); setHovered(true); };
   const left = (e: ThreeEvent<PointerEvent>) => {e.stopPropagation(); setHovered(false); };
+  const clicked = (i: number, j: number) => {
+    let obj = orbits.current.children[i].children[j];
+    setLastLicked(obj);
+    console.log(lastClicked)
+    setShowInfo(i*2+j);
+    if(window.innerWidth > 427)
+      gsap.to(obj.position, {z: j % 2 === 0 ? 1:-1, duration: 1});
+    else
+      gsap.to(obj.position, {y: 0.8, duration: 1});
+  }
+
+  useGSAP(() => {
+    console.log(lastClicked?.position);
+    if(showInfo === -1)
+      gsap.to(lastClicked?.position, {z: 0, y: 0, duration: 1});
+  }, [showInfo]);
 
   useEffect(() => {
     if (hovered) document.body.style.cursor = 'pointer';
@@ -224,7 +248,7 @@ function Spheres({count, radius}: {count:number, radius:number}) {
           data.map((orbit, i) => {
             const inner = orbit.map((text, j) => {
               return (
-                <group key={text} onPointerOver={over} onPointerLeave={left}>
+                <group key={text} onPointerOver={over} onPointerLeave={left} onClick={(e) => {e.stopPropagation(); clicked(i, j);}}>
                   <mesh geometry={new THREE.PlaneGeometry(16/10,9/10)}>
                     <meshStandardMaterial map={videoTextures[i*2+j]} side={THREE.DoubleSide} />
                   </mesh>
