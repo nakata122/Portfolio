@@ -14,7 +14,7 @@ uniform vec3 uCamera;
 void main() {
   vLife = aLife;
   vOffset = aOffset;
-  vec3 particlePosition = position * (1.0 + (sin(uTime + vLife*100.0) + 2.0) / 100.0);
+  vec3 particlePosition = position * (1.0 + (sin(uTime + vLife*100.0) + 2.0) / 50.0);
 
   vec4 modelPosition = modelMatrix * vec4(particlePosition, 1.0);
   vec4 viewPosition = viewMatrix * modelPosition;

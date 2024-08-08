@@ -20,7 +20,7 @@ function Spheres({count, radius}: {count:number, radius:number}) {
   camera.position.set(0.01,0.01,68);
   gsap.registerPlugin(ScrollTrigger);
 
-  const data = [['3D Exhibition', 'Landing page'], ['VR game', 'Avoid'], ['Flower', 'Factory']];
+  const data = [['3D Gallery', 'Landing page'], ['VR game', 'Obstacles'], ['Flower', 'Factory']];
   const vidSrc = ['./web1.mp4', './web2.mp4', './game1.mp4', './game2.mp4', 'experiment1.mp4', 'experiment2.mp4'];
   const [videos, videoTextures]:[videos:HTMLVideoElement[], videoTextures:THREE.VideoTexture[]] = useMemo(() => {
     const videos = [];
@@ -62,7 +62,7 @@ function Spheres({count, radius}: {count:number, radius:number}) {
     }
     
     return temp
-  }, [count, radius])
+  }, [])
 
   const vertices = useMemo(() => {
     const temp = [];
@@ -82,7 +82,7 @@ function Spheres({count, radius}: {count:number, radius:number}) {
       temp.push(start, end);
     }
     return temp
-  }, [count, radius])
+  }, [])
   
   useGSAP(
     () => {
@@ -98,12 +98,12 @@ function Spheres({count, radius}: {count:number, radius:number}) {
         tl.to(group.current.position, {  
           x: 0, 
           y: Math.cos(2 * Math.PI / count * (-2)) * 15, 
-          z: 63 + Math.sin(2 * Math.PI / count * (-2)) * 15, duration: 1, ease: 'power4.inOut'
+          z: 63 + Math.sin(2 * Math.PI / count * (-2)) * 15, duration: 1
            });
         tl.to(group.current.rotation, {  
           x: 2 * Math.PI / count * (0), 
           y: -Math.PI / 2, 
-          z: 0, duration: 1, ease: 'power4.inOut'
+          z: 0, duration: 1
            }, '<');  
         
            
@@ -119,7 +119,7 @@ function Spheres({count, radius}: {count:number, radius:number}) {
               x: 0,
               y: -2 * Math.PI / orbit.children.length * (i+1), 
               z: Math.PI / 4 * j, duration: 1
-            }, '+=1');
+            }, '+=0.5');
   
             tl.add(() => {
               if(tl.scrollTrigger?.direction === 1) {
@@ -137,13 +137,13 @@ function Spheres({count, radius}: {count:number, radius:number}) {
           tl.to(group.current.rotation, {  
             x: -2 * Math.PI / count * (j+1), 
             y: -Math.PI / 2, 
-            z: 0, duration: 1, ease: 'power4.inOut'
-            }, '+=1'); 
+            z: 0, duration: 1
+            }, '+=0.5'); 
         });
         
 
     },
-    [particles]
+    []
   );
 
   useEffect(() => {
@@ -181,7 +181,7 @@ function Spheres({count, radius}: {count:number, radius:number}) {
 
     })
     
-  })
+  }, [])
   
   const [hovered, setHovered] = useState(false);
   const over = (e: ThreeEvent<PointerEvent>) => {e.stopPropagation(); setHovered(true); };
@@ -205,9 +205,9 @@ function Spheres({count, radius}: {count:number, radius:number}) {
   })
   return (
     <group ref={group}>
-      <instancedMesh ref={mesh} geometry={new THREE.IcosahedronGeometry(3,10)} args={[undefined, undefined, count]} frustumCulled={false}>
+      <instancedMesh ref={mesh} geometry={new THREE.IcosahedronGeometry(3,15)} args={[undefined, undefined, count]} frustumCulled={false}>
         <MeshDistortMaterial 
-          color={new THREE.Color('rgb(0,0,0)')}
+          color={new THREE.Color('rgb(20,20,20)')}
           distort={0.2} 
           speed={2} 
           transparent 
@@ -224,9 +224,9 @@ function Spheres({count, radius}: {count:number, radius:number}) {
           data.map((orbit, i) => {
             const inner = orbit.map((text, j) => {
               return (
-                <group key={text}>
-                  <mesh geometry={new THREE.PlaneGeometry(16/10,9/10)}  onPointerOver={over}  onPointerLeave={left}>
-                    <meshStandardMaterial map={videoTextures[i*2+j]} side={THREE.DoubleSide}/>
+                <group key={text} onPointerOver={over} onPointerLeave={left}>
+                  <mesh geometry={new THREE.PlaneGeometry(16/10,9/10)}>
+                    <meshStandardMaterial map={videoTextures[i*2+j]} side={THREE.DoubleSide} />
                   </mesh>
                   <Text color="white" anchorX="center" anchorY="middle" fontSize={0.2} position={[0, -0.8, 0]}>
                     {text}
@@ -257,12 +257,12 @@ function Spheres({count, radius}: {count:number, radius:number}) {
 
       <Line
           points={vertices}       // Array of points, Array<Vector3 | Vector2 | [number, number, number] | [number, number] | number>
-          color="grey"                   // Default
+          color="rgb(255,255,255)"                   // Default
           lineWidth={2}                   // In pixels (default)
           segments={true}                        // If true, renders a THREE.LineSegments2. Otherwise, renders a THREE.Line2
           
         />
-        <Particles count={2500} />
+        <Particles count={5000} />
     </group>
   )
 }
