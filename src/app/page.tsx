@@ -21,6 +21,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
   const [dpr, setDpr] = useState(2);
   const [showInfo, setShowInfo] = useState(-1);
+  const information = ['Custom Web Gallery where you could register and use different rooms to upload your own pictures and then get a unique URL to share it with others', 'Landing page with various shader effects and a 3d model following the mouse cursor', 'Simple Three.js puzzle game about using surfaces to your advantage', 'Unreal Engine 5 game which I am working on curretly. Programming in C++ and Blueprints', 'Flower made entirely with code and simple shapes in Three.js', 'Factory background made in Three.js']
   const container = useRef<HTMLDivElement>(null);
   const target = new THREE.Object3D();
   target.position.set(0,0,68);
@@ -49,7 +50,7 @@ export default function Home() {
           trigger: '#container',
           start: 'top top',
           end: () => '+=' + window.innerHeight * 16,
-          markers: true,
+          markers: false,
           scrub: 1,
           pin: '#container'
         }
@@ -179,7 +180,7 @@ export default function Home() {
         showInfo !== -1 ? (
         <section id="info0" className="flex items-center z-10 absolute h-full">
           <p className="sm:w-[50%]"></p>
-          <p className="text-lg sm:text-left sm:w-[30%] md:w-[20%] sm:pt-0 w-full text-center pt-64">Lorem ipsum dolor sit amet consectetur adipisicing elit. Hic tempore tempora harum recusandae voluptatibus ullam reiciendis! Aperiam tempore minima praesentium recusandae suscipit. Magni ullam sint quae dicta velit eaque sunt!</p>
+          <p className="text-lg sm:text-left sm:w-[30%] md:w-[20%] sm:pt-0 w-full text-center pt-64">{information[showInfo]}</p>
         </section>):''
       }
     </div>

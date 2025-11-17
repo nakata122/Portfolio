@@ -22,7 +22,7 @@ function Spheres({count, radius, showInfo, setShowInfo}: {count:number, radius:n
   camera.position.set(0.01,0.01,68);
   gsap.registerPlugin(ScrollTrigger);
 
-  const data = [['3D Gallery', 'Landing page'], ['VR game', 'Obstacles'], ['Flower', 'Factory']];
+  const data = [['3D Gallery', 'Landing page'], ['VR game', 'TurboCut'], ['Flower', 'Factory']];
   const vidSrc = ['./web1.mp4', './web2.mp4', './game1.mp4', './game2.mp4', 'experiment1.mp4', 'experiment2.mp4'];
   const [videos, videoTextures]:[videos:HTMLVideoElement[], videoTextures:THREE.VideoTexture[]] = useMemo(() => {
     const videos = [];
@@ -34,6 +34,7 @@ function Spheres({count, radius, showInfo, setShowInfo}: {count:number, radius:n
       video.controls = true;
       video.muted = true;
       video.loop = true; 
+      video.playsInline = true;
       video.preload = 'metadata';
       // video.autoplay = true;
       // video.play();
@@ -197,7 +198,6 @@ function Spheres({count, radius, showInfo, setShowInfo}: {count:number, radius:n
   const clicked = (i: number, j: number) => {
     let obj = orbits.current.children[i].children[j];
     setLastLicked(obj);
-    console.log(lastClicked)
     setShowInfo(i*2+j);
     if(window.innerWidth > 427)
       gsap.to(obj.position, {z: j % 2 === 0 ? 1:-1, duration: 1});

@@ -1,0 +1,15 @@
+# robots.txt for 3D Web Developer Portfolio
+
+User-agent: *
+Disallow: /api/
+Disallow: /_next/
+Disallow: /static/
+Disallow: /server-sitemap.xml
+Disallow: /404
+Disallow: /500
+
+# Allow access to public pages
+Allow: /
+
+# Sitemap Location
+Sitemap: https://yourwebsite.com/sitemap.xml
